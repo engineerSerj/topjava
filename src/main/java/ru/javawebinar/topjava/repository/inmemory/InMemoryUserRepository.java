@@ -7,10 +7,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -45,16 +42,16 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
         log.info("getAll");
-        List<User> nameSort = new ArrayList<>();
-        for (Map.Entry<Integer, User> pair : repository.entrySet()){
-            nameSort.add(pair.getValue());
-        }
-        return nameSort.stream().sorted().collect(Collectors.toList());
+        List<User> nameSort = (List<User>) repository.values();
+        nameSort.sort(Comparator.comparing(User::getName).reversed());
+        return nameSort;
     }
 
     @Override
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
-        return null;
+        /*List<User> users = new ArrayList<>(repository.values());*/
+        return (User) repository.values().stream().filter(user -> user.getEmail().equals(email));
+        }
     }
-}
+
